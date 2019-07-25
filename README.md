@@ -24,3 +24,7 @@
 
 如果脚本对您有那么些小帮助的，麻烦帮忙点一下右上角的Star小星星  
 本脚本仅在浏览器端运行，源码公开可见，仅做研究使用
+
+### 效果图
+
+![image 演示图](https://raw.githubusercontent.com/lecoler/readme.md-list/master/temp/dom_01.png)
