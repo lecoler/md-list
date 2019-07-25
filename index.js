@@ -26,6 +26,9 @@
             'color': '#333',
             'display': 'block',
             'width': '100%',
+            'text-overflow': 'ellipsis',
+            'overflow': 'hidden',
+            'white-space': 'nowrap',
         };
         switch(+type){
             case 1:
@@ -104,13 +107,11 @@
             'line-height': '1.6',
             'z-index': '99',
             'max-width': '160px',
-            'text-overflow': 'ellipsis',
-            'overflow': 'hidden',
-            'white-space': 'nowrap',
+
         };
         $listDom.css(listCss).hide();
         for(let i of list){
-            let $a = $(`<a href=#${i.id} title=${i.value}>${i.value}</a>`);
+            let $a = $(`<a href='#${i.id}' title='${i.value}'>${i.value}</a>`);
             setCss($a,i.type);
             $listDom.append($a);
         }
