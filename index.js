@@ -102,6 +102,7 @@
             'flex-direction': 'column',
             'border-radius': '5px',
             'line-height': '1.6',
+            'z-index': '99',
         };
         $listDom.css(listCss).hide();
         for(let i of list){
@@ -126,7 +127,7 @@
         if(host=='github.com') //github home
             $content  = $('.markdown-body','#readme');
         else if(host=='gitee.com') //码云 home
-            $content  = $('.markdown-body','#git-readme');
+            $content  = $('.markdown-body','#tree-holder');
         const $domArr = $content.children();
         //get h1,h2,h3,h4,h5,h6
         for(let dom of $domArr.toArray()){
