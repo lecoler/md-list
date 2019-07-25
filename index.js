@@ -24,6 +24,8 @@
     function setCss($dom,type){
         let css = {
             'color': '#333',
+            'display': 'block',
+            'width': '100%',
         };
         switch(+type){
             case 1:
@@ -75,7 +77,7 @@
                 'outline': 'none',
                 'box-sizing': 'border-box',
             };
-            const $btn = $('<button id="aaaa">目录</button>').css(css).hover(function(){
+            const $btn = $('<button>目录</button>').css(css).hover(function(){
                 $(this).css('background','#5FB878')
             }).mouseout(function () {
                 $(this).css('background','#009688');
@@ -98,15 +100,17 @@
             'top': '10%',
             'overflow-y': 'auto',
             'color': '#333',
-            'display': 'flex',
-            'flex-direction': 'column',
             'border-radius': '5px',
             'line-height': '1.6',
             'z-index': '99',
+            'max-width': '160px',
+            'text-overflow': 'ellipsis',
+            'overflow': 'hidden',
+            'white-space': 'nowrap',
         };
         $listDom.css(listCss).hide();
         for(let i of list){
-            let $a = $(`<a href=#${i.id}>${i.value}</a>`);
+            let $a = $(`<a href=#${i.id} title=${i.value}>${i.value}</a>`);
             setCss($a,i.type);
             $listDom.append($a);
         }
