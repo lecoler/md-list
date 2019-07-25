@@ -10,7 +10,7 @@
 // @note         2019.7.25-V0.4  新增支持github
 // @note         2019.7.25-V0.2 修复bug，优化运行速度，新增按序获取
 // @home-url     https://greasyfork.org/zh-CN/scripts/387834
-// @homepageURL  https://github.com/lecoler/readme.md-list
+// @homepageURL  https://github.com/lecoler/md-list
 // @grant		 GM_addStyle
 // @require      https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js
 // @run-at 		 document-end
