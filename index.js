@@ -1,27 +1,28 @@
 // ==UserScript==
-// @name        码云README.md目录化
+// @name         md目录化
 // @namespace    README.md
 // @version      0.5
-// @description  github、码云项目README.md增加目录侧栏导航，有需求或问题请反馈。
+// @description  github、码云项目README.md增加目录侧栏导航
 // @author       lecoler
-// @match       *://gitee.com/*/*
+// @match        *://gitee.com/*/*
 // @match        *://github.com/*/*
-// @note           2019.7.25-V0.5  美化界面
-// @note           2019.7.25-V0.4  新增支持github
-// @note           2019.7.25-V0.2 修复bug，优化运行速度，新增按序获取
-// @home-url        https://greasyfork.org/zh-CN/scripts/387834
-// @homepageURL    https://github.com/lecoler/readme.md-list
+// @note         2019.7.25-V0.5  美化界面
+// @note         2019.7.25-V0.4  新增支持github
+// @note         2019.7.25-V0.2 修复bug，优化运行速度，新增按序获取
+// @home-url     https://greasyfork.org/zh-CN/scripts/387834
+// @homepageURL  https://github.com/lecoler/readme.md-list
 // @grant		 GM_addStyle
 // @require      https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js
 // @run-at 		 document-end
 // ==/UserScript==
-(function() {
+(function () {
     'use strict';
     //var
-    const saveList = ['H1','H2','H3','H4','H5','H6']
+    const saveList = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
     let list = [];
+
     //set css
-    function setCss($dom,type){
+    function setCss($dom, type) {
         let css = {
             'color': '#333',
             'display': 'block',
@@ -30,7 +31,7 @@
             'overflow': 'hidden',
             'white-space': 'nowrap',
         };
-        switch(+type){
+        switch (+type) {
             case 1:
                 css['font-size'] = '16px';
                 break;
@@ -55,15 +56,16 @@
                 css['text-indent'] = '50px';
                 break;
         }
-        $dom.css(css).hover(function(){
-            $(this).css('color','#01AAED')
+        $dom.css(css).hover(function () {
+            $(this).css('color', '#01AAED');
         }).mouseout(function () {
-            $(this).css('color','#333');
+            $(this).css('color', '#333');
         });
     }
+
     //create dom
-    function createBtn(){
-        return new Promise(reslove=>{
+    function createBtn() {
+        return new Promise(reslove => {
             const css = {
                 'position': 'fixed',
                 'top': 'calc(10% - 15px)',
@@ -80,15 +82,16 @@
                 'outline': 'none',
                 'box-sizing': 'border-box',
             };
-            const $btn = $('<button>目录</button>').css(css).hover(function(){
-                $(this).css('background','#5FB878')
+            const $btn = $('<button>目录</button>').css(css).hover(function () {
+                $(this).css('background', '#5FB878');
             }).mouseout(function () {
-                $(this).css('background','#009688');
-            })
+                $(this).css('background', '#009688');
+            });
             reslove($btn);
-        })
+        });
     }
-    function createDom(){
+
+    function createDom() {
         const $listDom = $('<div></div>');
         const listCss = {
             'min-width': '100px',
@@ -110,40 +113,41 @@
 
         };
         $listDom.css(listCss).hide();
-        for(let i of list){
+        for (let i of list) {
             let $a = $(`<a href='#${i.id}' title='${i.value}'>${i.value}</a>`);
-            setCss($a,i.type);
+            setCss($a, i.type);
             $listDom.append($a);
         }
         $('body').append($listDom);
         $listDom.slideDown('fast');
-        createBtn().then($btn=>{
-            $btn.on('click',()=>{
+        createBtn().then($btn => {
+            $btn.on('click', () => {
                 $listDom.slideToggle();
-            })
+            });
             $('body').append($btn);
-        })
+        });
     }
+
     //get readme.md
-    (function (){
+    (function () {
         //get url
         const host = window.location.host;
         let $content;
-        if(host=='github.com') //github home
-            $content  = $('.markdown-body','#readme');
-        else if(host=='gitee.com') //码云 home
-            $content  = $('.markdown-body','#tree-holder');
+        if (host == 'github.com') //github home
+            $content = $('.markdown-body', '#readme');
+        else if (host == 'gitee.com') //码云 home
+            $content = $('.markdown-body', '#tree-holder');
         const $domArr = $content.children();
         //get h1,h2,h3,h4,h5,h6
-        for(let dom of $domArr.toArray()){
+        for (let dom of $domArr.toArray()) {
             let type;
-            if(saveList.some((i,k)=>i==$(dom).get(0).tagName&&(type=k+1))){
+            if (saveList.some((i, k) => i == $(dom).get(0).tagName && (type = k + 1))) {
                 const id = $(dom).children('a').attr('id');
                 const value = $(dom).text().trim();
-                list.push({type,id,value})
+                list.push({type, id, value});
             }
         }
-        if(list.length)
+        if (list.length)
             createDom();
-    })()
+    })();
 })();
