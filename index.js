@@ -1,16 +1,16 @@
 // ==UserScript==
 // @name        码云README.md目录化
 // @namespace    README.md
-// @version      0.4
+// @version      0.5
 // @description  github、码云项目README.md增加目录侧栏导航，有需求或问题请反馈。
 // @author       lecoler
 // @match       *://gitee.com/*/*
-//@match        *://github.com/*/*
-//@note           2019.7.25-V0.4  新增支持github
+// @match        *://github.com/*/*
+// @note           2019.7.25-V0.5  美化界面
+// @note           2019.7.25-V0.4  新增支持github
 // @note           2019.7.25-V0.2 修复bug，优化运行速度，新增按序获取
 // @home-url        https://greasyfork.org/zh-CN/scripts/387834
-// @home-url2       https://github.com/lecoler/readme.md-list
-// @homepageURL    https://greasyfork.org/zh-CN/scripts/387834
+// @homepageURL    https://github.com/lecoler/readme.md-list
 // @grant		 GM_addStyle
 // @require      https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js
 // @run-at 		 document-end
