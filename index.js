@@ -1,13 +1,16 @@
 // ==UserScript==
 // @name        码云README.md目录化
 // @namespace    README.md
-// @version      0.3
-// @description  码云项目主界面README.md增加目录侧栏导航，有需求或问题请反馈。
+// @version      0.4
+// @description  github、码云项目README.md增加目录侧栏导航，有需求或问题请反馈。
 // @author       lecoler
 // @match       *://gitee.com/*/*
+//@match        *://github.com/*/*
+//@note           2019.7.25-V0.4  新增支持github
 // @note           2019.7.25-V0.2 修复bug，优化运行速度，新增按序获取
 // @home-url        https://greasyfork.org/zh-CN/scripts/387834
-// @homepageURL       https://github.com/lecoler/readme.md-list
+// @home-url2       https://github.com/lecoler/readme.md-list
+// @homepageURL    https://greasyfork.org/zh-CN/scripts/387834
 // @grant		 GM_addStyle
 // @require      https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js
 // @run-at 		 document-end
@@ -117,8 +120,13 @@
     }
     //get readme.md
     (function (){
-        //码云
-        const $content = $('.file_content.markdown-body','#git-readme');
+        //get url
+        const host = window.location.host;
+        let $content;
+        if(host=='github.com') //github home
+            $content  = $('.markdown-body','#readme');
+        else if(host=='gitee.com') //码云 home
+            $content  = $('.markdown-body','#git-readme');
         const $domArr = $content.children();
         //get h1,h2,h3,h4,h5,h6
         for(let dom of $domArr.toArray()){
@@ -131,6 +139,5 @@
         }
         if(list.length)
             createDom();
-        console.log(list)
     })()
 })();
