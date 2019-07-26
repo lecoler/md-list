@@ -4,6 +4,7 @@
 // @version      0.5
 // @description  github、码云项目README.md增加目录侧栏导航
 // @author       lecoler
+// @supportURL   https://github.com/lecoler/md-list
 // @match        *://gitee.com/*/*
 // @match        *://github.com/*/*
 // @note         2019.7.25-V0.5  美化界面
