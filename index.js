@@ -1,12 +1,14 @@
 // ==UserScript==
-// @name         md目录化
-// @namespace    README.md
+// @name         github、码云 md文件目录化
+// @namespace    github、码云 md文件目录化
 // @version      0.5
 // @description  github、码云项目README.md增加目录侧栏导航
 // @author       lecoler
 // @supportURL   https://github.com/lecoler/md-list
 // @match        *://gitee.com/*/*
+// @match        *://www.gitee.com/*/*
 // @match        *://github.com/*/*
+// @match        *://www.github.com/*/*
 // @note         2019.7.25-V0.5  美化界面
 // @note         2019.7.25-V0.4  新增支持github
 // @note         2019.7.25-V0.2 修复bug，优化运行速度，新增按序获取
