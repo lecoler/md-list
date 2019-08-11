@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         github、码云 md文件目录化
 // @namespace    github、码云 md文件目录化
-// @version      0.5
+// @version      0.6
 // @description  github、码云项目README.md增加目录侧栏导航
 // @author       lecoler
 // @supportURL   https://github.com/lecoler/md-list
@@ -9,6 +9,7 @@
 // @match        *://www.gitee.com/*/*
 // @match        *://github.com/*/*
 // @match        *://www.github.com/*/*
+// @note         2019.8.11-V0.6  优化代码，修改样式
 // @note         2019.7.25-V0.5  美化界面
 // @note         2019.7.25-V0.4  新增支持github
 // @note         2019.7.25-V0.2 修复bug，优化运行速度，新增按序获取
@@ -68,30 +69,28 @@
 
     //create dom
     function createBtn() {
-        return new Promise(reslove => {
-            const css = {
-                'position': 'fixed',
-                'top': 'calc(10% - 15px)',
-                'left': '0',
-                'border-radius': '10px',
-                'border': '1px solid #ccc',
-                'height': '25px',
-                'width': '60px',
-                'z-index': '999',
-                'box-shadow': '1px 2px 3px #ccc',
-                'background': '#009688',
-                'color': '#fff',
-                'font-size': '14px',
-                'outline': 'none',
-                'box-sizing': 'border-box',
-            };
-            const $btn = $('<button>目录</button>').css(css).hover(function () {
-                $(this).css('background', '#5FB878');
-            }).mouseout(function () {
-                $(this).css('background', '#009688');
-            });
-            reslove($btn);
+        const css = {
+            'position': 'fixed',
+            'top': 'calc(10% - 15px)',
+            'left': '0',
+            'border-radius': '10px',
+            'border': '1px solid #ccc',
+            'height': '25px',
+            'width': '60px',
+            'z-index': '999',
+            'box-shadow': '1px 2px 3px #ccc',
+            'background': '#009688',
+            'color': '#fff',
+            'font-size': '14px',
+            'outline': 'none',
+            'box-sizing': 'border-box',
+        };
+        const $btn = $('<button>目录</button>').css(css).hover(function () {
+            $(this).css('background', '#5FB878');
+        }).mouseout(function () {
+            $(this).css('background', '#009688');
         });
+        return $btn;
     }
 
     function createDom() {
@@ -101,7 +100,6 @@
             'box-sizing': 'border-box',
             'padding': '10px',
             'background': '#F0F0F0',
-            'border': '1px solid #ccc',
             'box-shadow': '1px 2px 3px #ccc',
             'height': '80%',
             'position': 'fixed',
@@ -123,12 +121,11 @@
         }
         $('body').append($listDom);
         $listDom.slideDown('fast');
-        createBtn().then($btn => {
-            $btn.on('click', () => {
-                $listDom.slideToggle();
-            });
-            $('body').append($btn);
+        const $btn = createBtn();
+        $btn.on('click', () => {
+            $listDom.slideToggle();
         });
+        $('body').append($btn);
     }
 
     //get readme.md
