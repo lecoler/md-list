@@ -16,7 +16,7 @@
 // @home-url     https://greasyfork.org/zh-CN/scripts/387834
 // @homepageURL  https://github.com/lecoler/md-list
 // @grant		 GM_addStyle
-// @require      https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js
+// @require      https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js
 // @run-at 		 document-end
 // ==/UserScript==
 (function () {
