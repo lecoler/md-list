@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         github、码云 md文件目录化
 // @namespace    github、码云 md文件目录化
-// @version      0.6
+// @version      0.7
 // @description  github、码云项目README.md增加目录侧栏导航
 // @author       lecoler
 // @supportURL   https://github.com/lecoler/md-list
@@ -9,6 +9,7 @@
 // @match        *://www.gitee.com/*/*
 // @match        *://github.com/*/*
 // @match        *://www.github.com/*/*
+// @note         2019.9.11-V0.7  新增点击跳转前判断是否能跳,不能将回到主页执行跳转
 // @note         2019.8.11-V0.6  优化代码，修改样式
 // @note         2019.7.25-V0.5  美化界面
 // @note         2019.7.25-V0.4  新增支持github
@@ -116,6 +117,22 @@
         $listDom.css(listCss).hide();
         for (let i of list) {
             let $a = $(`<a href='#${i.id}' title='${i.value}'>${i.value}</a>`);
+            //新增点击跳转前判断是否能跳,不能将回到主页执行跳转
+            $a.on('click',(e)=>{
+                const pathName = window.location.pathname;
+                const temp = pathName.split('/');
+                const index = pathName.lastIndexOf('/');
+                let str = pathName.substring(index,pathName.length);
+                const has = str.indexOf('#');
+                if(has!=-1){
+                    str = str.substring(0,has)
+                }
+                if(str.indexOf('.md')==-1 && temp.length>3){
+                    const relUrl = `${window.location.origin}/${temp[1]}/${temp[2]}${e.target.hash}`;
+                    window.location.href =relUrl
+                    return false;
+                }
+            })
             setCss($a, i.type);
             $listDom.append($a);
         }
