@@ -81,7 +81,6 @@
             'min-width': '100px',
             'max-width': '90%',
             'width': '160px',
-            'min-height': '50%',
             'max-height': '90%',
             'box-sizing': 'border-box',
             'padding': '10px',
