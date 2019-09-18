@@ -1,14 +1,17 @@
 // ==UserScript==
 // @name         github、码云 md文件目录化
+// @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      0.7
+// @version      0.8
 // @description  github、码云项目README.md增加目录侧栏导航
+// @description:en  Github, code cloud project README.md add directory sidebar navigation
 // @author       lecoler
 // @supportURL   https://github.com/lecoler/md-list
 // @match        *://gitee.com/*/*
 // @match        *://www.gitee.com/*/*
 // @match        *://github.com/*/*
 // @match        *://www.github.com/*/*
+// @note         2019.9.18-V0.8  修改样式,新增可手动拉伸
 // @note         2019.9.11-V0.7  新增点击跳转前判断是否能跳,不能将回到主页执行跳转
 // @note         2019.8.11-V0.6  优化代码，修改样式
 // @note         2019.7.25-V0.5  美化界面
@@ -23,7 +26,7 @@
 (function () {
     'use strict';
     //var
-    const saveList = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
+    const saveList = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7'];
     let list = [];
 
     //set css
@@ -35,32 +38,10 @@
             'text-overflow': 'ellipsis',
             'overflow': 'hidden',
             'white-space': 'nowrap',
+            'box-sizing': 'border-box',
+            'padding-left': (+type - 1) * 10 + 'px',
+            'font-size': 16 - (+type - 1) + 'px',
         };
-        switch (+type) {
-            case 1:
-                css['font-size'] = '16px';
-                break;
-            case 2:
-                css['font-size'] = '15px';
-                css['text-indent'] = '10px';
-                break;
-            case 3:
-                css['font-size'] = '14px';
-                css['text-indent'] = '20px';
-                break;
-            case 4:
-                css['font-size'] = '13px';
-                css['text-indent'] = '30px';
-                break;
-            case 5:
-                css['font-size'] = '12px';
-                css['text-indent'] = '40px';
-                break;
-            case 6:
-                css['font-size'] = '10px';
-                css['text-indent'] = '50px';
-                break;
-        }
         $dom.css(css).hover(function () {
             $(this).css('color', '#01AAED');
         }).mouseout(function () {
@@ -93,11 +74,15 @@
         });
         return $btn;
     }
-
+    //create listDom
     function createDom() {
         const $listDom = $('<div></div>');
         const listCss = {
             'min-width': '100px',
+            'max-width': '90%',
+            'width': '160px',
+            'min-height': '50%',
+            'max-height': '90%',
             'box-sizing': 'border-box',
             'padding': '10px',
             'background': '#F0F0F0',
@@ -111,8 +96,7 @@
             'border-radius': '5px',
             'line-height': '1.6',
             'z-index': '99',
-            'max-width': '160px',
-
+            'resize': 'both',
         };
         $listDom.css(listCss).hide();
         for (let i of list) {
