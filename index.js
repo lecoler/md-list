@@ -40,7 +40,7 @@
             'white-space': 'nowrap',
             'box-sizing': 'border-box',
             'padding-left': (+type - 1) * 10 + 'px',
-            'font-size': 16 - (+type - 1) + 'px',
+            'font-size': 16 - (+type - 1) + 'px'
         };
         $dom.css(css).hover(function () {
             $(this).css('color', '#01AAED');
@@ -65,7 +65,7 @@
             'color': '#fff',
             'font-size': '14px',
             'outline': 'none',
-            'box-sizing': 'border-box',
+            'box-sizing': 'border-box'
         };
         const $btn = $('<button>目录</button>').css(css).hover(function () {
             $(this).css('background', '#5FB878');
@@ -74,6 +74,7 @@
         });
         return $btn;
     }
+
     //create listDom
     function createDom() {
         const $listDom = $('<div></div>');
@@ -95,27 +96,33 @@
             'border-radius': '5px',
             'line-height': '1.6',
             'z-index': '99',
-            'resize': 'both',
+            'resize': 'both'
         };
         $listDom.css(listCss).hide();
         for (let i of list) {
             let $a = $(`<a href='#${i.id}' title='${i.value}'>${i.value}</a>`);
             //新增点击跳转前判断是否能跳,不能将回到主页执行跳转
-            $a.on('click',(e)=>{
+            $a.on('click', (e) => {
                 const pathName = window.location.pathname;
                 const temp = pathName.split('/');
                 const index = pathName.lastIndexOf('/');
-                let str = pathName.substring(index,pathName.length);
+                const hasTree = temp[3] == 'tree';
+                const num = hasTree ? 5 : 3;
+                let str = pathName.substring(index, pathName.length);
                 const has = str.indexOf('#');
-                if(has!=-1){
-                    str = str.substring(0,has)
+                if (has != -1) {
+                    str = str.substring(0, has);
                 }
-                if(str.indexOf('.md')==-1 && temp.length>3){
-                    const relUrl = `${window.location.origin}/${temp[1]}/${temp[2]}${e.target.hash}`;
-                    window.location.href =relUrl
+                if (str.indexOf('.md') == -1 && temp.length > num) {
+                    let relUrl;
+                    if (hasTree)
+                        relUrl = `${window.location.origin}/${temp[1]}/${temp[2]}/${temp[3]}/${temp[4]}${e.target.hash}`;
+                    else
+                        relUrl = `${window.location.origin}/${temp[1]}/${temp[2]}${e.target.hash}`;
+                    window.location.href = relUrl;
                     return false;
                 }
-            })
+            });
             setCss($a, i.type);
             $listDom.append($a);
         }
