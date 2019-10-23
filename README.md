@@ -1,9 +1,11 @@
 # md目录化
-![TamperMonkey v4.5](https://img.shields.io/badge/TamperMonkey-v4.8-brightgreen.svg) ![Chrome x64 v60.4](https://img.shields.io/badge/Chrome%20x64-v73.0-brightgreen.svg)
+![TamperMonkey v4.5](https://img.shields.io/badge/TamperMonkey-v4.8-brightgreen.svg) ![Chrome x64 v60.4](https://img.shields.io/badge/Chrome%20x64-v73.0-brightgreen.svg)  
 
 ### 安装使用
 
-[下载地址](https://greasyfork.org/zh-CN/scripts/387834)
+[下载地址](https://greasyfork.org/zh-CN/scripts/387834)  
+
+***Tip***: Internet Explorer 8 及更早 IE 版本不支持   
 
 ### 插件功能
 
@@ -29,4 +31,4 @@
 
 ### 效果图
 
-![image 演示图](https://raw.githubusercontent.com/lecoler/readme.md-list/master/temp/dom_01.png)
+![image 演示图](https://raw.githubusercontent.com/lecoler/readme.md-list/master/static/dom_01.png)

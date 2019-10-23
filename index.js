@@ -7,6 +7,7 @@
 // @description:en  Github, code cloud project README.md add directory sidebar navigation
 // @author       lecoler
 // @supportURL   https://github.com/lecoler/md-list
+// @icon         https://raw.githubusercontent.com/lecoler/readme.md-list/master/static/icon.png
 // @match        *://gitee.com/*/*
 // @match        *://www.gitee.com/*/*
 // @match        *://github.com/*/*
@@ -19,142 +20,65 @@
 // @note         2019.7.25-V0.2 修复bug，优化运行速度，新增按序获取
 // @home-url     https://greasyfork.org/zh-CN/scripts/387834
 // @homepageURL  https://github.com/lecoler/md-list
-// @grant		 GM_addStyle
-// @require      https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js
-// @run-at 		 document-end
+// @grant		     GM_addStyle
+// @run-at 		   document-end
 // ==/UserScript==
 (function () {
     'use strict';
-    //var
-    const saveList = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7'];
-    let list = [];
-
-    //set css
-    function setCss($dom, type) {
-        let css = {
-            'color': '#333',
-            'display': 'block',
-            'width': '100%',
-            'text-overflow': 'ellipsis',
-            'overflow': 'hidden',
-            'white-space': 'nowrap',
-            'box-sizing': 'border-box',
-            'padding-left': (+type - 1) * 10 + 'px',
-            'font-size': 16 - (+type - 1) + 'px'
-        };
-        $dom.css(css).hover(function () {
-            $(this).css('color', '#01AAED');
-        }).mouseout(function () {
-            $(this).css('color', '#333');
-        });
+    // 初始化
+    let initStatus = false;
+    function init() {
+        style();
+        const button = document.createElement('button');
+        button.innerHTML = '目录';
+        button.setAttribute('class', 'le-md-btn');
+        document.body.appendChild(button);
+        initStatus = true;
     }
-
-    //create dom
-    function createBtn() {
-        const css = {
-            'position': 'fixed',
-            'top': 'calc(10% - 15px)',
-            'left': '0',
-            'border-radius': '10px',
-            'border': '1px solid #ccc',
-            'height': '25px',
-            'width': '60px',
-            'z-index': '999',
-            'box-shadow': '1px 2px 3px #ccc',
-            'background': '#009688',
-            'color': '#fff',
-            'font-size': '14px',
-            'outline': 'none',
-            'box-sizing': 'border-box'
-        };
-        const $btn = $('<button>目录</button>').css(css).hover(function () {
-            $(this).css('background', '#5FB878');
-        }).mouseout(function () {
-            $(this).css('background', '#009688');
-        });
-        return $btn;
-    }
-
-    //create listDom
-    function createDom() {
-        const $listDom = $('<div></div>');
-        const listCss = {
-            'min-width': '100px',
-            'max-width': '90%',
-            'width': '160px',
-            'max-height': '90%',
-            'box-sizing': 'border-box',
-            'padding': '10px',
-            'background': '#F0F0F0',
-            'box-shadow': '1px 2px 3px #ccc',
-            'height': '80%',
-            'position': 'fixed',
-            'left': '0',
-            'top': '10%',
-            'overflow-y': 'auto',
-            'color': '#333',
-            'border-radius': '5px',
-            'line-height': '1.6',
-            'z-index': '99',
-            'resize': 'both'
-        };
-        $listDom.css(listCss).hide();
-        for (let i of list) {
-            let $a = $(`<a href='#${i.id}' title='${i.value}'>${i.value}</a>`);
-            //新增点击跳转前判断是否能跳,不能将回到主页执行跳转
-            $a.on('click', (e) => {
-                const pathName = window.location.pathname;
-                const temp = pathName.split('/');
-                const index = pathName.lastIndexOf('/');
-                const hasTree = temp[3] == 'tree';
-                const num = hasTree ? 5 : 3;
-                let str = pathName.substring(index, pathName.length);
-                const has = str.indexOf('#');
-                if (has != -1) {
-                    str = str.substring(0, has);
-                }
-                if (str.indexOf('.md') == -1 && temp.length > num) {
-                    let relUrl;
-                    if (hasTree)
-                        relUrl = `${window.location.origin}/${temp[1]}/${temp[2]}/${temp[3]}/${temp[4]}${e.target.hash}`;
-                    else
-                        relUrl = `${window.location.origin}/${temp[1]}/${temp[2]}${e.target.hash}`;
-                    window.location.href = relUrl;
-                    return false;
-                }
-            });
-            setCss($a, i.type);
-            $listDom.append($a);
+    // 插入样式表
+    function style() {
+        const style = document.createElement('style');
+        style.innerHTML = `
+        .le-md-btn{
+            color: #000;
         }
-        $('body').append($listDom);
-        $listDom.slideDown('fast');
-        const $btn = createBtn();
-        $btn.on('click', () => {
-            $listDom.slideToggle();
-        });
-        $('body').append($btn);
+        `;
+        document.head.appendChild(style);
     }
-
-    //get readme.md
-    (function () {
-        //get url
+    // 执行
+    (function start() {
+        // 获取链接
         const host = window.location.host;
+
+        // 获取相应的容器dom
         let $content;
-        if (host == 'github.com') //github home
-            $content = $('.markdown-body', '#readme');
-        else if (host == 'gitee.com') //码云 home
-            $content = $('.markdown-body', '#tree-holder');
-        const $domArr = $content.children();
-        //get h1,h2,h3,h4,h5,h6
-        for (let dom of $domArr.toArray()) {
-            let type;
-            if (saveList.some((i, k) => i == $(dom).get(0).tagName && (type = k + 1))) {
-                const id = $(dom).children('a').attr('id');
-                const value = $(dom).text().trim();
-                list.push({type, id, value});
+        let list = [];
+        if (host === 'github.com' || host.startsWith('localhost')) {
+            //github home
+            $content = document.getElementById('readme').getElementsByClassName('markdown-body')[0];
+        } else if (host === 'gitee.com') {
+            //码云 home
+            $content = document.getElementById('tree-content-holder').getElementsByClassName('markdown-body')[0];
+        }
+        // 获取子级
+        const $children = $content.children;
+        for (let $dom of $children) {
+            const tagName = $dom.tagName;
+            const lastCharAt = +tagName.charAt(tagName.length - 1);
+            // 获取Tag h0-h9
+            if (tagName.length === 2 && tagName.startsWith('H') && !isNaN(lastCharAt)) {
+                // 获取value
+                const value = $dom.innerText.trim();
+                // 获取锚点
+                const href = $dom.getElementsByTagName('a')[0].getAttribute('href');
+                list.push({type: lastCharAt, value, href});
             }
         }
-        if (list.length)
-            createDom();
+        //是否存在
+        if (list.length) {
+            if(!initStatus) init()
+        }
     })();
+
+
 })();
