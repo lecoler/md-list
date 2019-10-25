@@ -129,28 +129,39 @@
     <link rel="manifest" href="/manifest.json" crossOrigin="use-credentials">
     <style>
         .le-md-btn {
-            position: absolute;
-            font-size: 1.5em;
-            text-transform: uppercase;
-            padding: 7px 20px;
-            left: 50%;
-            width: 200px;
-            margin-left: -100px;
+            position: fixed;
             top: 50%;
-            border-radius: 10px;
-            color: white;
+            left: 50%;
+            z-index: 999;
+            font-size: 14px;
+            text-transform: uppercase;
+            width: 80px;
+            height: 80px;
+            box-sizing: border-box;
+            margin-left: -40px;
+            border-radius: 50%;
+            color: #fff;
             text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.8);
-            border: 5px solid transparent;
-            border-bottom-color: rgba(0, 0, 0, 0.35);
-            background: hsla(260, 100%, 50%, 1);
+            border: 0;
+            background: hsla(230, 50%, 50%, 0.8);
             cursor: pointer;
             animation: pulse 1s infinite alternate;
-            transition: background 0.4s, border 0.2s, margin 0.2s;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .le-md-btn:hover {
             background: hsla(220, 100%, 60%, 1);
             margin-top: -1px;
             animation: none;
+            box-shadow: 0 0 15px #0099ff;
+        }
+        .le-md-btn>img{
+            width: 20px;
+            height: 20px;
+
         }
         @keyframes pulse {
             0% {
@@ -158,6 +169,7 @@
             }
             100% {
                 margin-top: 6px;
+                box-shadow: 0 0 25px hsla(230, 50%, 50%, 1);
             }
         }
 

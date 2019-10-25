@@ -30,7 +30,10 @@
     function init() {
         style();
         const button = document.createElement('button');
-        button.innerHTML = '目录';
+        const icon = document.createElement('img');
+        icon.setAttribute('src','https://raw.githubusercontent.com/lecoler/readme.md-list/dev/static/icon.png');
+        button.appendChild(icon);
+        button.innerHTML += '目录';
         button.setAttribute('class', 'le-md-btn');
         document.body.appendChild(button);
         initStatus = true;
@@ -39,9 +42,7 @@
     function style() {
         const style = document.createElement('style');
         style.innerHTML = `
-        .le-md-btn{
-            color: #000;
-        }
+
         `;
         document.head.appendChild(style);
     }
