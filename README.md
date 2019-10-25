@@ -11,12 +11,15 @@
 
 - 项目README.md增加目录侧栏导航
 - 支持收缩/展开
+- 悬浮按钮 
+- 侧栏可拖动 
 - 支持点击滚动到页面相应部分
 - 目前只支持
   - 码云
   - github
 
 ### 更新日志
+***2019.10.25*** : V0.9  重构项目，移除jq，改用原生开发，新增悬浮按钮  
 ***2019.9.18*** : V0.8 修改样式,新增可手动拉伸  
 ***2019.9.11*** : V0.7 新增点击跳转前判断是否能跳,不能将回到主页执行跳转  
 ***2019.8.11*** : V0.6 优化代码，修改样式    
@@ -32,3 +35,4 @@
 ### 效果图
 
 ![image 演示图](https://raw.githubusercontent.com/lecoler/readme.md-list/master/static/dom_01.png)
+![image 演示图](https://raw.githubusercontent.com/lecoler/readme.md-list/master/static/dom_02.png)
