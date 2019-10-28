@@ -2,9 +2,9 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      0.8
-// @description  github、码云项目README.md增加目录侧栏导航
-// @description:en  Github, code cloud project README.md add directory sidebar navigation
+// @version      1.0
+// @description  github、码云项目README.md增加目录侧栏导航，悬浮按钮
+// @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
 // @supportURL   https://github.com/lecoler/md-list
 // @icon         https://raw.githubusercontent.com/lecoler/readme.md-list/master/static/icon.png
@@ -12,6 +12,7 @@
 // @match        *://www.gitee.com/*/*
 // @match        *://github.com/*/*
 // @match        *://www.github.com/*/*
+// @note         2019.10.28-V1.0  优化逻辑，追加判断目录内容是否存在
 // @note         2019.10.25-V0.9  重构项目，移除jq，改用原生开发，新增悬浮按钮
 // @note         2019.9.18-V0.8  修改样式,新增可手动拉伸
 // @note         2019.9.11-V0.7  新增点击跳转前判断是否能跳,不能将回到主页执行跳转
@@ -29,6 +30,8 @@
     // 初始化
     let initStatus = false;
     let $menu = null;
+    let lastPathName = '';
+    let moveStatus = false;
 
     function init() {
         style();
@@ -40,15 +43,24 @@
         $button.innerHTML = `目录`;
         // 添加点击事件
         $button.addEventListener('click', e => {
+            //判断是否在移动
+            if (moveStatus) {
+                moveStatus = false;
+                return false;
+            }
             if ($menu.className.match(/hidden/)) {
+                // 判断路径是否改变，menu是否重载
+                if (lastPathName !== window.location.pathname) {
+                    start();
+                }
                 // 判断menu位置
                 const winWidth = document.documentElement.clientWidth;
                 const winHeight = document.documentElement.clientHeight;
                 const x = e.clientX;
                 const y = e.clientY;
-                const classname1 = winWidth/2 - x > 0 ? 'le-md-right' : 'le-md-left';
-                const classname2 = winHeight/2 - y > 0 ? 'le-md-bottom' : 'le-md-top';
-                $menu.className = `${classname1} ${classname2}`
+                const classname1 = winWidth / 2 - x > 0 ? 'le-md-right' : 'le-md-left';
+                const classname2 = winHeight / 2 - y > 0 ? 'le-md-bottom' : 'le-md-top';
+                $menu.className = `${classname1} ${classname2}`;
             } else {
                 $menu.className += ' hidden';
             }
@@ -199,34 +211,47 @@
         ele.onmousedown = event => {
             let eleX = event.offsetX;
             let eleY = event.offsetY;
+            let count = 0;
             window.document.onmousemove = e => {
+                //防止误触移动
+                if (count > 9) {
+                    moveStatus = true;
+                }
                 let winX = e.clientX;
                 let winY = e.clientY;
                 ele.parentNode.style.left = winX - eleX + 'px';
                 ele.parentNode.style.top = winY - eleY + 'px';
+                count++;
             };
         };
-        ele.onmouseup = () => window.document.onmousemove = null;
-        ele.onmouseout = () => window.document.onmousemove = null;
+        ele.onmouseup = () => {
+            window.document.onmousemove = null;
+        };
+        ele.onmouseout = () => {
+            window.document.onmousemove = null;
+        };
     }
 
     // 执行
-    (function start() {
+    function start() {
         // 获取链接
         const host = window.location.host;
+        lastPathName = window.location.pathname;
 
         // 获取相应的容器dom
-        let $content;
+        let $content = null;
         let list = [];
-        if (host === 'github.com' || host.startsWith('localhost')) {
+        if (host === 'github.com') {
             //github home
-            $content = document.getElementById('readme').getElementsByClassName('markdown-body')[0];
+            const $parent = document.getElementById('readme');
+            $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
         } else if (host === 'gitee.com') {
             //码云 home
-            $content = document.getElementById('tree-content-holder').getElementsByClassName('markdown-body')[0];
+            const $parent = document.getElementById('tree-content-holder');
+            $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
         }
         // 获取子级
-        const $children = $content.children;
+        const $children = $content ? $content.children : [];
         for (let $dom of $children) {
             const tagName = $dom.tagName;
             const lastCharAt = +tagName.charAt(tagName.length - 1);
@@ -239,21 +264,31 @@
                 list.push({type: lastCharAt, value, href});
             }
         }
+        // 清空容器
+        if ($menu) {
+            const list = [...$menu.childNodes];
+            list.forEach(i => $menu.removeChild(i));
+        }
+        //是否初始化
+        if (!initStatus) {
+            init();
+        }
         //是否存在
         if (list.length) {
-            //是否初始化
-            if (!initStatus) {
-                init();
-            }
             // 生成菜单
             for (let i of list) {
                 const li = document.createElement('li');
                 li.innerHTML = `<a href="${i.href}" title="${i.value}" style="font-size: ${1.3 - i.type * 0.1}em">${i.value}</a>`;
-                li.setAttribute('style',`margin-left: ${i.type * 0.4}em;border-left: 0.5em groove hsla(200, 80%, ${45+i.type * 10}%, 0.8);`);
+                li.setAttribute('style', `margin-left: ${i.type * 0.4}em;border-left: 0.5em groove hsla(200, 80%, ${45 + i.type * 10}%, 0.8);`);
                 $menu.appendChild(li);
             }
+        } else if (initStatus) {
+            const li = document.createElement('li');
+            li.innerHTML = `<a>未找到目录内容</a>`;
+            $menu.appendChild(li);
         }
-    })();
+    }
 
+    start();
 
 })();
