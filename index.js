@@ -167,13 +167,31 @@
             min-height: 400px;
             height: 600px;
             resize: both;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-            background: #FAFCFD;
-            border: 1px solid #CCEFF5;
-            border-radius: 6px;
+            padding-left: 10px;
         }
         .le-md > ul::-webkit-scrollbar {
-            display: none;
+            width: 8px;     
+            height: 1px;
+        }
+        .le-md > ul::-webkit-scrollbar-thumb {
+            border-radius: 8px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+            background-color: #96C2F1;
+            background-image: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.2) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.2) 75%,
+                transparent 75%,
+                transparent
+            );
+        }
+        .le-md > ul::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px 8px 0 0;
+            background: #EFF7FF;
         }
         .le-md > ul > li {
             border-bottom: 0.5em solid #eee;
