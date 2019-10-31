@@ -166,7 +166,7 @@
             overflow: auto;
             transition: min-height 0.4s;
             min-height: 200px;
-            height: 400px;
+            height: auto;
             max-height: 700px;
             resize: both;
             padding-right: 10px;
