@@ -160,14 +160,16 @@
         .le-md > ul {
             width: 200px;
             min-width: 200px;
+            max-width: 1000px;
             list-style: none;
             position: absolute;
             overflow: auto;
-            transition: height 0.4s, min-height 0.4s;
-            min-height: 400px;
-            height: 600px;
+            transition: min-height 0.4s;
+            min-height: 200px;
+            height: 400px;
+            max-height: 700px;
             resize: both;
-            padding-left: 10px;
+            padding-right: 10px;
         }
         .le-md > ul::-webkit-scrollbar {
             width: 8px;     
