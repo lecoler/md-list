@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.0
+// @version      1.1
 // @description  github、码云项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
@@ -12,6 +12,7 @@
 // @match        *://www.gitee.com/*/*
 // @match        *://github.com/*/*
 // @match        *://www.github.com/*/*
+// @note         2019.10.31-V1.1  修改样式，新增鼠标右键返回顶部
 // @note         2019.10.28-V1.0  优化逻辑，追加判断目录内容是否存在
 // @note         2019.10.25-V0.9  重构项目，移除jq，改用原生开发，新增悬浮按钮
 // @note         2019.10.14-V0.9  修复bug
