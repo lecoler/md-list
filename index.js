@@ -131,7 +131,9 @@
             height: 10px;
         }
         .hidden {
-            max-height: 0 !important;
+            height: 0 !important;
+            min-height: 0 !important;
+            border: 0 !important;
         }
         .le-md-left {
             right: 0;
@@ -148,22 +150,24 @@
             top: 0;
         }
         .le-md > ul {
-            max-width: 200px;
-            min-width: 80px;
-            text-align: left;
-            cursor: pointer;
+            width: 200px;
+            min-width: 200px;
             list-style: none;
             position: absolute;
-            overflow-y: auto;
-            transition: all 0.4s;
-            max-height: 600px;
+            overflow: auto;
+            transition: height 0.4s, min-height 0.4s;
+            min-height: 400px;
+            height: 600px;
             resize: both;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+            background: #FAFCFD;
+            border: 1px solid #CCEFF5;
+            border-radius: 6px;
         }
         .le-md > ul::-webkit-scrollbar {
             display: none;
         }
         .le-md > ul > li {
-            margin-top: 0.25em;
             border-bottom: 0.5em solid #eee;
             padding: 5px 10px;
             transition: 0.4s all;
@@ -171,6 +175,7 @@
             border-right: 1px solid #e2e2e2;
             border-top: 1px solid #e2e2e2;
             background: #fff;
+            box-sizing: border-box;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
             border-radius: 0 0 5px 5px;
         }
@@ -280,7 +285,7 @@
             for (let i of list) {
                 const li = document.createElement('li');
                 li.innerHTML = `<a href="${i.href}" title="${i.value}" style="font-size: ${1.3 - i.type * 0.1}em">${i.value}</a>`;
-                li.setAttribute('style', `margin-left: ${i.type * 0.4}em;border-left: 0.5em groove hsla(200, 80%, ${45 + i.type * 10}%, 0.8);`);
+                li.setAttribute('style', `margin-left: ${i.type - 1}em;border-left: 0.5em groove hsla(200, 80%, ${45 + i.type * 10}%, 0.8);`);
                 $menu.appendChild(li);
             }
         } else if (initStatus) {
