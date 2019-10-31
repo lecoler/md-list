@@ -42,9 +42,10 @@
         $menu.className = 'hidden';
         $button.setAttribute('class', 'le-md-btn');
         $button.innerHTML = `目录`;
-        $button.title = '右键返回顶部(to Top)';
+        $button.title = '右键返回顶部(RM to Top)';
         // 添加右键点击事件
         $button.oncontextmenu = e => {
+            // 回到顶部
             scrollTo(0, 0);
             return false;
         };
