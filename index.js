@@ -158,8 +158,8 @@
             top: 0;
         }
         .le-md > ul {
-            width: 200px;
-            min-width: 200px;
+            width: auto;
+            min-width: 100px;
             max-width: 1000px;
             list-style: none;
             position: absolute;
