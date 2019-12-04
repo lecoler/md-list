@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.1
+// @version      1.2
 // @description  github、码云项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
@@ -12,6 +12,7 @@
 // @match        *://www.gitee.com/*/*
 // @match        *://github.com/*/*
 // @match        *://www.github.com/*/*
+// @note         2019.12.04-V1.2  新增容错
 // @note         2019.10.31-V1.1  修改样式，新增鼠标右键返回顶部
 // @note         2019.10.28-V1.0  优化逻辑，追加判断目录内容是否存在
 // @note         2019.10.25-V0.9  重构项目，移除jq，改用原生开发，新增悬浮按钮
@@ -293,9 +294,13 @@
             if (tagName.length === 2 && tagName.startsWith('H') && !isNaN(lastCharAt)) {
                 // 获取value
                 const value = $dom.innerText.trim();
-                // 获取锚点
-                const href = $dom.getElementsByTagName('a')[0].getAttribute('href');
-                list.push({type: lastCharAt, value, href});
+                // 新增容错率
+                const $a = $dom.getElementsByTagName('a')[0];
+                if($a){
+                    // 获取锚点
+                    const href = $a.getAttribute('href');
+                    list.push({type: lastCharAt, value, href});
+                }
             }
         }
         // 清空容器
