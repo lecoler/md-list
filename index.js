@@ -2,8 +2,8 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.2
-// @description  github、码云项目README.md增加目录侧栏导航，悬浮按钮
+// @version      1.3
+// @description  github、码云、npmjs项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
 // @supportURL   https://github.com/lecoler/md-list
@@ -12,6 +12,9 @@
 // @match        *://www.gitee.com/*/*
 // @match        *://github.com/*/*
 // @match        *://www.github.com/*/*
+// @match        *://npmjs.com/*/*
+// @match        *://www.npmjs.com/*/*
+// @note         2020.02.10-V1.3  修改样式,整个按钮可点;新增支持 npmjs.com
 // @note         2019.12.04-V1.2  新增容错
 // @note         2019.10.31-V1.1  修改样式，新增鼠标右键返回顶部
 // @note         2019.10.28-V1.0  优化逻辑，追加判断目录内容是否存在
@@ -196,19 +199,7 @@
             border-radius: 8px 8px 0 0;
             background: #EFF7FF;
         }
-        .le-md > ul > li {
-            border-bottom: 0.5em solid #eee;
-            padding: 5px 10px;
-            transition: 0.4s all;
-            border-left: 0.5em groove #e2e2e2;
-            border-right: 1px solid #e2e2e2;
-            border-top: 1px solid #e2e2e2;
-            background: #fff;
-            box-sizing: border-box;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-            border-radius: 0 0 5px 5px;
-        }
-        .le-md > ul > li:hover {
+        .le-md > ul a:hover {
             background: #99CCFF;
             border-left: 1em groove #0099CC !important;
         }
@@ -221,7 +212,16 @@
             white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
-            width: 100%;
+            padding: 5px 10px;
+            border-bottom: 0.5em solid #eee;
+            transition: 0.4s all;
+            border-left: 0.5em groove #e2e2e2;
+            border-right: 1px solid #e2e2e2;
+            border-top: 1px solid #e2e2e2;
+            background: #fff;
+            box-sizing: border-box;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+            border-radius: 0 0 5px 5px;
         }
         @keyframes pulse {
             0% {
@@ -284,6 +284,10 @@
             //码云 home
             const $parent = document.getElementById('tree-content-holder');
             $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
+        }else if(host === 'www.npmjs.com'){
+            // npmjs.com
+            const $parent = document.getElementById('readme');
+            $content = $parent ? $parent : null;
         }
         // 获取子级
         const $children = $content ? $content.children : [];
@@ -317,8 +321,7 @@
             // 生成菜单
             for (let i of list) {
                 const li = document.createElement('li');
-                li.innerHTML = `<a href="${i.href}" title="${i.value}" style="font-size: ${1.3 - i.type * 0.1}em">${i.value}</a>`;
-                li.setAttribute('style', `margin-left: ${i.type - 1}em;border-left: 0.5em groove hsla(200, 80%, ${45 + i.type * 10}%, 0.8);`);
+                li.innerHTML = `<a href="${i.href}" title="${i.value}" style="font-size: ${1.3 - i.type * 0.1}em;margin-left: ${i.type - 1}em;border-left: 0.5em groove hsla(200, 80%, ${45 + i.type * 10}%, 0.8);">${i.value}</a>`;
                 $menu.appendChild(li);
             }
         } else if (initStatus) {
