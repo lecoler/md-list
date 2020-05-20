@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.3
+// @version      1.4
 // @description  github、码云、npmjs项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
@@ -14,6 +14,7 @@
 // @match        *://www.github.com/*/*
 // @match        *://npmjs.com/*/*
 // @match        *://www.npmjs.com/*/*
+// @note         2020.05.20-V1.4  拖动按钮坐标改用百分比，对窗口大小改变做相应适配
 // @note         2020.02.10-V1.3  修改样式,整个按钮可点;新增支持 npmjs.com
 // @note         2019.12.04-V1.2  新增容错
 // @note         2019.10.31-V1.1  修改样式，新增鼠标右键返回顶部
@@ -83,6 +84,13 @@
         $div.setAttribute('class', 'le-md');
         dragEle($button);
         document.body.appendChild($div);
+        // 监听窗口大小
+        window.onresize = function(){
+            // 隐藏列表
+            if (!$menu.className.match(/hidden/)) {
+                $menu.className += ' hidden';
+            }
+        }
         initStatus = true;
     }
 
@@ -176,7 +184,7 @@
             padding-right: 10px;
         }
         .le-md > ul::-webkit-scrollbar {
-            width: 8px;     
+            width: 8px;
             height: 1px;
         }
         .le-md > ul::-webkit-scrollbar-thumb {
@@ -244,6 +252,7 @@
     // 拖动事件
     function dragEle(ele) {
         ele.onmousedown = event => {
+            // 鼠标相对dom坐标
             let eleX = event.offsetX;
             let eleY = event.offsetY;
             let count = 0;
@@ -252,10 +261,18 @@
                 if (count > 9) {
                     moveStatus = true;
                 }
+                // dom相对win坐标
                 let winX = e.clientX;
                 let winY = e.clientY;
-                ele.parentNode.style.left = winX - eleX + 'px';
-                ele.parentNode.style.top = winY - eleY + 'px';
+                // 实际坐标
+                let x = winX - eleX;
+                let y = winY - eleY;
+                // win长宽
+                let winWidth = document.documentElement.clientWidth;
+                let winHeight = document.documentElement.clientHeight;
+                // 转化成百分比
+                ele.parentNode.style.left = (x / winWidth).toFixed(3) * 100 + '%';
+                ele.parentNode.style.top = (y / winHeight).toFixed(3) * 100 + '%';
                 count++;
             };
         };
@@ -284,7 +301,7 @@
             //码云 home
             const $parent = document.getElementById('tree-content-holder');
             $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
-        }else if(host === 'www.npmjs.com'){
+        } else if (host === 'www.npmjs.com') {
             // npmjs.com
             const $parent = document.getElementById('readme');
             $content = $parent ? $parent : null;
@@ -300,7 +317,7 @@
                 const value = $dom.innerText.trim();
                 // 新增容错率
                 const $a = $dom.getElementsByTagName('a')[0];
-                if($a){
+                if ($a) {
                     // 获取锚点
                     const href = $a.getAttribute('href');
                     list.push({type: lastCharAt, value, href});
