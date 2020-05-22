@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.4
+// @version      1.5
 // @description  github、码云、npmjs项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
@@ -14,6 +14,7 @@
 // @match        *://www.github.com/*/*
 // @match        *://npmjs.com/*/*
 // @match        *://www.npmjs.com/*/*
+// @note         2020.05.22-V1.5  新增支持github wiki 页
 // @note         2020.05.20-V1.4  拖动按钮坐标改用百分比，对窗口大小改变做相应适配
 // @note         2020.02.10-V1.3  修改样式,整个按钮可点;新增支持 npmjs.com
 // @note         2019.12.04-V1.2  新增容错
@@ -294,8 +295,8 @@
         let $content = null;
         let list = [];
         if (host === 'github.com') {
-            //github home
-            const $parent = document.getElementById('readme');
+            //github home / wiki
+            const $parent = document.getElementById('readme') || document.getElementById('wiki-body');
             $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
         } else if (host === 'gitee.com') {
             //码云 home
