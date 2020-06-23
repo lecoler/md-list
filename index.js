@@ -14,6 +14,7 @@
 // @match        *://www.github.com/*/*
 // @match        *://npmjs.com/*/*
 // @match        *://www.npmjs.com/*/*
+// @note         2020.06.23-V1.6  css样式进行兼容处理
 // @note         2020.05.22-V1.5  新增支持github wiki 页
 // @note         2020.05.20-V1.4  拖动按钮坐标改用百分比，对窗口大小改变做相应适配
 // @note         2020.02.10-V1.3  修改样式,整个按钮可点;新增支持 npmjs.com
@@ -86,7 +87,7 @@
         dragEle($button);
         document.body.appendChild($div);
         // 监听窗口大小
-        window.onresize = function(){
+        window.onresize = function () {
             // 隐藏列表
             if (!$menu.className.match(/hidden/)) {
                 $menu.className += ' hidden';
@@ -110,17 +111,24 @@
             text-transform: uppercase;
             width: 60px;
             height: 60px;
-            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
             border-radius: 50%;
             color: #fff;
             text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.8);
             border: 0;
             background: hsla(230, 50%, 50%, 0.6);
-            animation: pulse 1s infinite alternate;
+            -webkit-animation: pulse 1s infinite alternate;
+                    animation: pulse 1s infinite alternate;
+            -webkit-transition: background 0.4s, margin 0.2s;
+            -o-transition: background 0.4s, margin 0.2s;
             transition: background 0.4s, margin 0.2s;
             text-align: center;
             line-height: 60px;
-            user-select: none;
+            -webkit-user-select: none;
+               -moz-user-select: none;
+                -ms-user-select: none;
+                    user-select: none;
             cursor: move;
         }
         .le-md-btn:after {
@@ -136,19 +144,22 @@
             right: 0;
             width: 40px;
             -webkit-transition: height 0.5s ease-in-out, width 0.5s ease-in-out;
-            -moz-transition: height 0.5s ease-in-out, width 0.5s ease-in-out;
-            -ms-transition: height 0.5s ease-in-out, width 0.5s ease-in-out;
+            -o-transition: height 0.5s ease-in-out, width 0.5s ease-in-out;
             transition: height 0.5s ease-in-out, width 0.5s ease-in-out;
-            animation: shadow 1s infinite alternate;
+            -webkit-animation: shadow 1s infinite alternate;
+                    animation: shadow 1s infinite alternate;
         }
         .le-md-btn:hover {
             background: hsla(220, 50%, 47%, 1);
             margin-top: -1px;
-            animation: none;
-            box-shadow: inset -5px -10px 1px hsla(220, 50%, 42%, 1);
+            -webkit-animation: none;
+                    animation: none;
+            -webkit-box-shadow: inset -5px -10px 1px hsla(220, 50%, 42%, 1);
+                    box-shadow: inset -5px -10px 1px hsla(220, 50%, 42%, 1);
         }
         .le-md-btn:hover:after {
-            animation: none;
+            -webkit-animation: none;
+                    animation: none;
             height: 10px;
         }
         .hidden {
@@ -177,6 +188,8 @@
             list-style: none;
             position: absolute;
             overflow: auto;
+            -webkit-transition: min-height 0.4s;
+            -o-transition: min-height 0.4s;
             transition: min-height 0.4s;
             min-height: 50px;
             height: auto;
@@ -190,7 +203,8 @@
         }
         .le-md > ul::-webkit-scrollbar-thumb {
             border-radius: 8px;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+            -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+                    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
             background-color: #96C2F1;
             background-image: linear-gradient(
                 45deg,
@@ -204,7 +218,8 @@
             );
         }
         .le-md > ul::-webkit-scrollbar-track {
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+            -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+                    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
             border-radius: 8px 8px 0 0;
             background: #EFF7FF;
         }
@@ -219,18 +234,33 @@
             text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
             display: block;
             white-space: nowrap;
-            text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+               text-overflow: ellipsis;
             overflow: hidden;
             padding: 5px 10px;
             border-bottom: 0.5em solid #eee;
+            -webkit-transition: 0.4s all;
+            -o-transition: 0.4s all;
             transition: 0.4s all;
             border-left: 0.5em groove #e2e2e2;
             border-right: 1px solid #e2e2e2;
             border-top: 1px solid #e2e2e2;
             background: #fff;
-            box-sizing: border-box;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+                    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
             border-radius: 0 0 5px 5px;
+        }
+        @-webkit-keyframes pulse {
+            0% {
+                margin-top: 0;
+            }
+            100% {
+                margin-top: 6px;
+                -webkit-box-shadow: inset -5px -10px 1px hsla(230, 50%, 55%, 0.6), 0 0 25px hsla(230, 50%, 50%, 1);
+                        box-shadow: inset -5px -10px 1px hsla(230, 50%, 55%, 0.6), 0 0 25px hsla(230, 50%, 50%, 1);
+            }
         }
         @keyframes pulse {
             0% {
@@ -238,7 +268,13 @@
             }
             100% {
                 margin-top: 6px;
-                box-shadow: inset -5px -10px 1px hsla(230, 50%, 55%, 0.6), 0 0 25px hsla(230, 50%, 50%, 1);
+                -webkit-box-shadow: inset -5px -10px 1px hsla(230, 50%, 55%, 0.6), 0 0 25px hsla(230, 50%, 50%, 1);
+                        box-shadow: inset -5px -10px 1px hsla(230, 50%, 55%, 0.6), 0 0 25px hsla(230, 50%, 50%, 1);
+            }
+        }
+        @-webkit-keyframes shadow {
+            to {
+                height: 16px;
             }
         }
         @keyframes shadow {

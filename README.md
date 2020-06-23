@@ -1,11 +1,16 @@
 # md目录化
 ![TamperMonkey v4.5](https://img.shields.io/badge/TamperMonkey-v4.8-brightgreen.svg) ![Chrome x64 v60.4](https://img.shields.io/badge/Chrome%20x64-v73.0-brightgreen.svg)  
+本项目是个js脚本，需配合 [Greasy Fork](https://greasyfork.org/zh-CN) 脚本管理器使用。   
+为网站的Markdown格式的文档，提供个目录列表   
 
-### 安装使用
+### 安装使用 
 
 [下载地址](https://greasyfork.org/zh-CN/scripts/387834)  
 
-***Tip***: Internet Explorer 8 及更早 IE 版本不支持   
+#### 配合Tampermonkey食用最佳
+[Tampermonkey 插件下载](https://greasyfork.org/zh-CN)   
+
+***Tip***: Internet Explorer 8 及更早 IE 版本不支持，本项目是基于Chrome开发调试，其他浏览器可能会存在些问题，请见谅      
 
 ### 插件功能
 
@@ -24,6 +29,7 @@
   - npmjs.com   
 
 ### 更新日志
+***2020.06.23*** : V1.6  css样式进行兼容处理      
 ***2020.05.22*** : V1.5  新增支持github wiki 页    
 ***2020.05.20*** : V1.4  拖动按钮坐标改用百分比，对窗口大小改变做相应适配   
 ***2020.02.10*** : V1.3  修改样式,整个按钮可点;新增支持 npmjs.com      
