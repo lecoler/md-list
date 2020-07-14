@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.6
+// @version      1.7
 // @description  github、码云、npmjs项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
@@ -14,6 +14,7 @@
 // @match        *://www.github.com/*/*
 // @match        *://npmjs.com/*/*
 // @match        *://www.npmjs.com/*/*
+// @note         2020.06.23-V1.7  新增当前页面有能解析的md才展示
 // @note         2020.06.23-V1.6  css样式进行兼容处理
 // @note         2020.05.22-V1.5  新增支持github wiki 页
 // @note         2020.05.20-V1.4  拖动按钮坐标改用百分比，对窗口大小改变做相应适配
@@ -31,60 +32,46 @@
 // @note         2019.7.25-V0.2 修复bug，优化运行速度，新增按序获取
 // @home-url     https://greasyfork.org/zh-CN/scripts/387834
 // @homepageURL  https://github.com/lecoler/md-list
-// @grant		     GM_addStyle
-// @run-at 		   document-end
+// @grant		 GM_addStyle
+// @run-at 		 document-end
 // ==/UserScript==
 (function () {
     'use strict';
     // 初始化
-    let initStatus = false;
     let $menu = null;
+    let $button = null;
     let lastPathName = '';
     let moveStatus = false;
 
-    function init() {
+    // 初始化按钮
+    function createDom() {
+        // 往页面插入样式表
         style();
+        // 创建主容器
         const $div = document.createElement('div');
-        const $button = document.createElement('div');
+        // 创建按钮
+        $button = document.createElement('div');
+        // 创建菜单
         $menu = document.createElement('ul');
-        $menu.className = 'hidden';
-        $button.setAttribute('class', 'le-md-btn');
+        // 按钮设置
         $button.innerHTML = `目录`;
         $button.title = '右键返回顶部(RM to Top)';
+        // 添加点击事件
+        $button.addEventListener('click', btnClick);
         // 添加右键点击事件
         $button.oncontextmenu = e => {
             // 回到顶部
             scrollTo(0, 0);
             return false;
         };
-        // 添加点击事件
-        $button.addEventListener('click', e => {
-            //判断是否在移动
-            if (moveStatus) {
-                moveStatus = false;
-                return false;
-            }
-            if ($menu.className.match(/hidden/)) {
-                // 判断路径是否改变，menu是否重载
-                if (lastPathName !== window.location.pathname) {
-                    start();
-                }
-                // 判断menu位置
-                const winWidth = document.documentElement.clientWidth;
-                const winHeight = document.documentElement.clientHeight;
-                const x = e.clientX;
-                const y = e.clientY;
-                const classname1 = winWidth / 2 - x > 0 ? 'le-md-right' : 'le-md-left';
-                const classname2 = winHeight / 2 - y > 0 ? 'le-md-bottom' : 'le-md-top';
-                $menu.className = `${classname1} ${classname2}`;
-            } else {
-                $menu.className += ' hidden';
-            }
-        });
+        // 往主容器添加dom
         $div.appendChild($button);
         $div.appendChild($menu);
+        // 主容器设置样式
         $div.setAttribute('class', 'le-md');
+        // 为按钮添加拖动
         dragEle($button);
+        // 往页面添加主容器
         document.body.appendChild($div);
         // 监听窗口大小
         window.onresize = function () {
@@ -93,7 +80,31 @@
                 $menu.className += ' hidden';
             }
         }
-        initStatus = true;
+    }
+
+    // 按钮点击事件
+    function btnClick(e) {
+        //判断是否在移动
+        if (moveStatus) {
+            moveStatus = false;
+            return false;
+        }
+        if ($menu.className.match(/hidden/)) {
+            // 判断路径是否改变，menu是否重载
+            if (lastPathName !== window.location.pathname) {
+                start(true);
+            }
+            // 判断menu位置
+            const winWidth = document.documentElement.clientWidth;
+            const winHeight = document.documentElement.clientHeight;
+            const x = e.clientX;
+            const y = e.clientY;
+            const classname1 = winWidth / 2 - x > 0 ? 'le-md-right' : 'le-md-left';
+            const classname2 = winHeight / 2 - y > 0 ? 'le-md-bottom' : 'le-md-top';
+            $menu.className = `${classname1} ${classname2}`;
+        } else {
+            $menu.className += ' hidden';
+        }
     }
 
     // 插入样式表
@@ -107,6 +118,7 @@
             z-index: 999;
         }
         .le-md-btn {
+            display: block;
             font-size: 14px;
             text-transform: uppercase;
             width: 60px;
@@ -161,6 +173,11 @@
             -webkit-animation: none;
                     animation: none;
             height: 10px;
+        }
+        .le-md-btn-hidden{
+            display: none;
+             -webkit-animation: none;
+                     animation: none;
         }
         .hidden {
             height: 0 !important;
@@ -321,8 +338,8 @@
         };
     }
 
-    // 执行
-    function start() {
+    // 执行, flag 是否部分重载
+    function start(flag) {
         // 获取链接
         const host = window.location.host;
         lastPathName = window.location.pathname;
@@ -334,10 +351,14 @@
             //github home / wiki
             const $parent = document.getElementById('readme') || document.getElementById('wiki-body');
             $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
+            // 监听github dom的变化
+            !$menu && domChangeListener(document.getElementById('js-repo-pjax-container'),start)
         } else if (host === 'gitee.com') {
             //码云 home
             const $parent = document.getElementById('tree-content-holder');
             $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
+            // 监听gitee dom的变化
+            !$menu && domChangeListener(document.getElementById('tree-holder'), start)
         } else if (host === 'www.npmjs.com') {
             // npmjs.com
             const $parent = document.getElementById('readme');
@@ -361,14 +382,20 @@
                 }
             }
         }
-        // 清空容器
+        // 清空容器，不存在则创建
         if ($menu) {
             const list = [...$menu.childNodes];
             list.forEach(i => $menu.removeChild(i));
+        } else {
+            createDom();
         }
-        //是否初始化
-        if (!initStatus) {
-            init();
+        if (!$menu || !$button) {
+            console.warn('md文件目录化 脚本初始化失败')
+            return false
+        }
+        // 隐藏菜单
+        if (!flag) {
+            $menu.className = 'hidden';
         }
         //是否存在
         if (list.length) {
@@ -378,13 +405,28 @@
                 li.innerHTML = `<a href="${i.href}" title="${i.value}" style="font-size: ${1.3 - i.type * 0.1}em;margin-left: ${i.type - 1}em;border-left: 0.5em groove hsla(200, 80%, ${45 + i.type * 10}%, 0.8);">${i.value}</a>`;
                 $menu.appendChild(li);
             }
-        } else if (initStatus) {
-            const li = document.createElement('li');
-            li.innerHTML = `<a>未找到目录内容</a>`;
-            $menu.appendChild(li);
+            // 设置按钮样式
+            $button.setAttribute('class', 'le-md-btn');
+        } else {
+            // 设置按钮样式
+            $button.setAttribute('class', 'le-md-btn le-md-btn-hidden');
         }
     }
 
     start();
 
+    /**
+     * @Description 监听指定dom发现变化事件
+     * @author lecoler
+     * @date 2020/7/14
+     * @param dom
+     * @param fun 回调 (MutationRecord[],MutationObserver)
+     * @return
+     */
+    function domChangeListener(dom, fun) {
+        const observe = new MutationObserver(fun)
+        observe.observe(dom, {
+            childList: true
+        })
+    }
 })();

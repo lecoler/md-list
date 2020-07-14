@@ -23,12 +23,13 @@
   - 点击滚动到页面相应部分 
   - 可手动拉伸  
 - 目前只支持  
-  - 码云  
+  - 码云（gitee）  
   - github
   - github wiki 
   - npmjs.com   
 
 ### 更新日志
+***2020.07.14*** : V1.7  新增当前页面有能解析的md才展示      
 ***2020.06.23*** : V1.6  css样式进行兼容处理      
 ***2020.05.22*** : V1.5  新增支持github wiki 页    
 ***2020.05.20*** : V1.4  拖动按钮坐标改用百分比，对窗口大小改变做相应适配   
@@ -50,7 +51,7 @@
 本脚本仅在浏览器端运行，源码公开可见，仅做研究使用
 
 ### 反馈建议 
-如发现bug/其他异常体验欢迎提交 ![issues](https://github.com/lecoler/md-list/issues) 反馈 
+如发现bug/其他异常体验欢迎提交 [issues](https://github.com/lecoler/md-list/issues) 反馈 
 
 ### 效果图
 
