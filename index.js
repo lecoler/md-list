@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.7
+// @version      1.8
 // @description  github、码云、npmjs项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
@@ -14,7 +14,9 @@
 // @match        *://www.github.com/*/*
 // @match        *://npmjs.com/*/*
 // @match        *://www.npmjs.com/*/*
-// @note         2020.06.23-V1.7  新增当前页面有能解析的md才展示
+// @include      *.md
+// @note         2020.09.14-V1.8  新增支持全部网站 *.md（测试版）
+// @note         2020.07.14-V1.7  新增当前页面有能解析的md才展示
 // @note         2020.06.23-V1.6  css样式进行兼容处理
 // @note         2020.05.22-V1.5  新增支持github wiki 页
 // @note         2020.05.20-V1.4  拖动按钮坐标改用百分比，对窗口大小改变做相应适配
@@ -32,7 +34,6 @@
 // @note         2019.7.25-V0.2 修复bug，优化运行速度，新增按序获取
 // @home-url     https://greasyfork.org/zh-CN/scripts/387834
 // @homepageURL  https://github.com/lecoler/md-list
-// @grant		 GM_addStyle
 // @run-at 		 document-end
 // ==/UserScript==
 (function () {
@@ -339,7 +340,7 @@
     }
 
     // 执行, flag 是否部分重载
-    function start(flag) {
+    async function start(flag) {
         // 获取链接
         const host = window.location.host;
         lastPathName = window.location.pathname;
@@ -352,7 +353,7 @@
             const $parent = document.getElementById('readme') || document.getElementById('wiki-body');
             $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
             // 监听github dom的变化
-            !$menu && domChangeListener(document.getElementById('js-repo-pjax-container'),start)
+            !$menu && domChangeListener(document.getElementById('js-repo-pjax-container'), start)
         } else if (host === 'gitee.com') {
             //码云 home
             const $parent = document.getElementById('tree-content-holder');
@@ -363,6 +364,9 @@
             // npmjs.com
             const $parent = document.getElementById('readme');
             $content = $parent ? $parent : null;
+        } else {
+            // 检测是否符合md格式
+            $content = await checkMd()
         }
         // 获取子级
         const $children = $content ? $content.children : [];
@@ -413,8 +417,6 @@
         }
     }
 
-    start();
-
     /**
      * @Description 监听指定dom发现变化事件
      * @author lecoler
@@ -429,4 +431,71 @@
             childList: true
         })
     }
+
+    /**
+     * @Description 判断是否符合格式的md
+     * @author lecoler
+     * @date 2020/9/14
+     * @return DOM
+     */
+    function checkMd() {
+        return new Promise(resolve => {
+            // TODO： 部分页面动态加载操作dom，获取dom时未能获取完整，未能找到不用计时器的方法，如果您有解决方法，务必告知作者[拜托]
+            setTimeout(function () {
+
+                // 是否存在h1 h2 h3 h4 h5标签,同时他们父级相同
+                let h1List = document.body.getElementsByTagName("h1")
+                let h2List = document.body.getElementsByTagName("h2")
+                let h3List = document.body.getElementsByTagName("h3")
+                let h4List = document.body.getElementsByTagName("h4")
+                let h5List = document.body.getElementsByTagName("h5")
+                let h6List = document.body.getElementsByTagName("h6")
+                // 缓存
+                let tmp = []
+
+                // 获取父级
+                function getParent(list) {
+                    for (let i = 0; i < list.length; i++) {
+                        const parent = list[i].parentElement
+                        const item = tmp.filter(j => j && j['ele'].isEqualNode(parent))[0]
+                        if (item) {
+                            item.count += 1
+                        } else {
+                            tmp.push({
+                                ele: parent,
+                                count: 1
+                            })
+                        }
+                    }
+                }
+
+                getParent(h1List)
+                getParent(h2List)
+                getParent(h3List)
+                getParent(h4List)
+                getParent(h5List)
+                getParent(h6List)
+
+                // 获取出现次数最高父级
+                // 排序
+                tmp.sort((a, b) => b.count - a.count);
+                // 返回
+                resolve(tmp[0]["ele"])
+            }, 3000)
+        })
+    }
+
+    try {
+        document.onreadystatechange = function () {
+            if (document.readyState === "complete") {
+                start();
+            }
+        }
+    } catch (e) {
+        console.error("github、码云 md文件目录化 脚本异常报错：");
+        console.error(e)
+        console.error("请联系作者修复解决，https://github.com/lecoler/md-list")
+        start()
+    }
+
 })();
