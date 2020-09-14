@@ -367,7 +367,6 @@
         } else {
             // 检测是否符合md格式
             $content = await checkMd()
-            console.log($content);
         }
         // 获取子级
         const $children = $content ? $content.children : [];
