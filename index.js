@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.8
+// @version      1.9
 // @description  github、码云、npmjs项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
@@ -15,6 +15,7 @@
 // @match        *://npmjs.com/*/*
 // @match        *://www.npmjs.com/*/*
 // @include      *.md
+// @note         2020.09.15-V1.9  优化，移除计时器，改成用户触发加载检测，同时为检测失败添加‘移除目录’按钮（测试版）
 // @note         2020.09.14-V1.8  新增支持全部网站 *.md（测试版）
 // @note         2020.07.14-V1.7  新增当前页面有能解析的md才展示
 // @note         2020.06.23-V1.6  css样式进行兼容处理
@@ -39,6 +40,8 @@
 (function () {
     'use strict';
     // 初始化
+    let reload = false; // 是否需重载
+    let $main = null;
     let $menu = null;
     let $button = null;
     let lastPathName = '';
@@ -49,7 +52,7 @@
         // 往页面插入样式表
         style();
         // 创建主容器
-        const $div = document.createElement('div');
+        $main = document.createElement('div');
         // 创建按钮
         $button = document.createElement('div');
         // 创建菜单
@@ -66,14 +69,14 @@
             return false;
         };
         // 往主容器添加dom
-        $div.appendChild($button);
-        $div.appendChild($menu);
+        $main.appendChild($button);
+        $main.appendChild($menu);
         // 主容器设置样式
-        $div.setAttribute('class', 'le-md');
+        $main.setAttribute('class', 'le-md');
         // 为按钮添加拖动
         dragEle($button);
         // 往页面添加主容器
-        document.body.appendChild($div);
+        document.body.appendChild($main);
         // 监听窗口大小
         window.onresize = function () {
             // 隐藏列表
@@ -92,7 +95,7 @@
         }
         if ($menu.className.match(/hidden/)) {
             // 判断路径是否改变，menu是否重载
-            if (lastPathName !== window.location.pathname) {
+            if (lastPathName !== window.location.pathname || reload) {
                 start(true);
             }
             // 判断menu位置
@@ -340,7 +343,9 @@
     }
 
     // 执行, flag 是否部分重载
-    async function start(flag) {
+    function start(flag) {
+        // 初始化
+        reload = false
         // 获取链接
         const host = window.location.host;
         lastPathName = window.location.pathname;
@@ -366,7 +371,7 @@
             $content = $parent ? $parent : null;
         } else {
             // 检测是否符合md格式
-            $content = await checkMd()
+            $content = checkMd()
         }
         // 获取子级
         const $children = $content ? $content.children : [];
@@ -408,6 +413,20 @@
                 const li = document.createElement('li');
                 li.innerHTML = `<a href="${i.href}" title="${i.value}" style="font-size: ${1.3 - i.type * 0.1}em;margin-left: ${i.type - 1}em;border-left: 0.5em groove hsla(200, 80%, ${45 + i.type * 10}%, 0.8);">${i.value}</a>`;
                 $menu.appendChild(li);
+                // 是否不符合规范
+                if (!i.value) {
+                    reload = true
+                }
+            }
+            // 提供关闭入口
+            if (reload) {
+                const li = document.createElement('li');
+                li.innerHTML = `<a title="移除目录" style="font-size: 1.1em;margin-left: 0.1em;border-left: 0.5em groove hsla(0,80%,50%,0.8);">移除目录</a>`;
+                // 添加事件
+                li.onclick = function () {
+                    $main.remove()
+                }
+                $menu.appendChild(li);
             }
             // 设置按钮样式
             $button.setAttribute('class', 'le-md-btn');
@@ -423,13 +442,16 @@
      * @date 2020/7/14
      * @param dom
      * @param fun 回调 (MutationRecord[],MutationObserver)
-     * @return
+     * @param opt 额外参数
+     * @return MutationObserver
      */
-    function domChangeListener(dom, fun) {
+    function domChangeListener(dom, fun, opt = {}) {
         const observe = new MutationObserver(fun)
-        observe.observe(dom, {
-            childList: true
-        })
+        observe.observe(dom, Object.assign({
+            childList: true,
+            attributes: true
+        }, opt))
+        return observe
     }
 
     /**
@@ -439,50 +461,29 @@
      * @return DOM
      */
     function checkMd() {
-        return new Promise(resolve => {
-            // TODO： 部分页面动态加载操作dom，获取dom时未能获取完整，未能找到不用计时器的方法，如果您有解决方法，务必告知作者[拜托]
-            setTimeout(function () {
-
-                // 是否存在h1 h2 h3 h4 h5标签,同时他们父级相同
-                let h1List = document.body.getElementsByTagName("h1")
-                let h2List = document.body.getElementsByTagName("h2")
-                let h3List = document.body.getElementsByTagName("h3")
-                let h4List = document.body.getElementsByTagName("h4")
-                let h5List = document.body.getElementsByTagName("h5")
-                let h6List = document.body.getElementsByTagName("h6")
-                // 缓存
-                let tmp = []
-
-                // 获取父级
-                function getParent(list) {
-                    for (let i = 0; i < list.length; i++) {
-                        const parent = list[i].parentElement
-                        const item = tmp.filter(j => j && j['ele'].isEqualNode(parent))[0]
-                        if (item) {
-                            item.count += 1
-                        } else {
-                            tmp.push({
-                                ele: parent,
-                                count: 1
-                            })
-                        }
-                    }
+        // 缓存
+        let tmp = []
+        // 是否存在h1 h2 h3 h4 h5 ...标签,同时他们父级相同
+        for (let i = 1; i < 7; i++) {
+            let list = document.body.getElementsByTagName(`h${i}`)
+            // 获取父级
+            for (let i = 0; i < list.length; i++) {
+                const parent = list[i].parentElement
+                const item = tmp.filter(j => j && j['ele'].isEqualNode(parent))[0]
+                if (item) {
+                    item.count += 1
+                } else {
+                    tmp.push({
+                        ele: parent,
+                        count: 1
+                    })
                 }
-
-                getParent(h1List)
-                getParent(h2List)
-                getParent(h3List)
-                getParent(h4List)
-                getParent(h5List)
-                getParent(h6List)
-
-                // 获取出现次数最高父级
-                // 排序
-                tmp.sort((a, b) => b.count - a.count);
-                // 返回
-                resolve(tmp[0]["ele"])
-            }, 3000)
-        })
+            }
+        }
+        // 排序
+        tmp.sort((a, b) => b.count - a.count);
+        // 获取出现次数最高父级 返回
+        return tmp.length ? tmp[0]["ele"] : null
     }
 
     try {
@@ -495,7 +496,5 @@
         console.error("github、码云 md文件目录化 脚本异常报错：");
         console.error(e)
         console.error("请联系作者修复解决，https://github.com/lecoler/md-list")
-        start()
     }
-
 })();
