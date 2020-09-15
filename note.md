@@ -15,3 +15,13 @@ observe.observe(document.getElementById('body'), {
     childList: true
 })
 ```
+
+- childList：子节点的变动
+- attributes：属性的变动
+- characterData：节点内容或节点文本的变动
+- subtree：所有后代节点的变动
+
+方法
+
++ disconnect()   取消监听
++ takeRecords()  清空记录
