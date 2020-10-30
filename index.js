@@ -15,6 +15,7 @@
 // @match        *://npmjs.com/*/*
 // @match        *://www.npmjs.com/*/*
 // @include      *.md
+// @note         2020.10.30-v1.10 Fix not find node
 // @note         2020.09.15-V1.9  优化，移除计时器，改成用户触发加载检测，同时为检测失败添加‘移除目录’按钮（测试版）
 // @note         2020.09.14-V1.8  新增支持全部网站 *.md（测试版）
 // @note         2020.07.14-V1.7  新增当前页面有能解析的md才展示
@@ -83,7 +84,7 @@
             if (!$menu.className.match(/hidden/)) {
                 $menu.className += ' hidden';
             }
-        }
+        };
     }
 
     // 按钮点击事件
@@ -345,7 +346,7 @@
     // 执行, flag 是否部分重载
     function start(flag) {
         // 初始化
-        reload = false
+        reload = false;
         // 获取链接
         const host = window.location.host;
         lastPathName = window.location.pathname;
@@ -358,20 +359,20 @@
             const $parent = document.getElementById('readme') || document.getElementById('wiki-body');
             $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
             // 监听github dom的变化
-            !$menu && domChangeListener(document.getElementById('js-repo-pjax-container'), start)
+            !$menu && domChangeListener(document.getElementById('js-repo-pjax-container'), start);
         } else if (host === 'gitee.com') {
             //码云 home
             const $parent = document.getElementById('tree-content-holder');
             $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
             // 监听gitee dom的变化
-            !$menu && domChangeListener(document.getElementById('tree-holder'), start)
+            !$menu && domChangeListener(document.getElementById('tree-holder'), start);
         } else if (host === 'www.npmjs.com') {
             // npmjs.com
             const $parent = document.getElementById('readme');
             $content = $parent ? $parent : null;
         } else {
             // 检测是否符合md格式
-            $content = checkMd()
+            $content = checkMd();
         }
         // 获取子级
         const $children = $content ? $content.children : [];
@@ -387,7 +388,11 @@
                 if ($a) {
                     // 获取锚点
                     const href = $a.getAttribute('href');
-                    list.push({type: lastCharAt, value, href});
+                    list.push({
+                        type: lastCharAt,
+                        value,
+                        href,
+                    });
                 }
             }
         }
@@ -399,8 +404,8 @@
             createDom();
         }
         if (!$menu || !$button) {
-            console.warn('md文件目录化 脚本初始化失败')
-            return false
+            console.warn('md文件目录化 脚本初始化失败');
+            return false;
         }
         // 隐藏菜单
         if (!flag) {
@@ -415,7 +420,7 @@
                 $menu.appendChild(li);
                 // 是否不符合规范
                 if (!i.value) {
-                    reload = true
+                    reload = true;
                 }
             }
             // 提供关闭入口
@@ -424,8 +429,8 @@
                 li.innerHTML = `<a title="移除目录" style="font-size: 1.1em;margin-left: 0.1em;border-left: 0.5em groove hsla(0,80%,50%,0.8);">移除目录</a>`;
                 // 添加事件
                 li.onclick = function () {
-                    $main.remove()
-                }
+                    $main.remove();
+                };
                 $menu.appendChild(li);
             }
             // 设置按钮样式
@@ -446,12 +451,13 @@
      * @return MutationObserver
      */
     function domChangeListener(dom, fun, opt = {}) {
-        const observe = new MutationObserver(fun)
+        if (!dom) return null;
+        const observe = new MutationObserver(fun);
         observe.observe(dom, Object.assign({
             childList: true,
-            attributes: true
-        }, opt))
-        return observe
+            attributes: true,
+        }, opt));
+        return observe;
     }
 
     /**
@@ -462,39 +468,39 @@
      */
     function checkMd() {
         // 缓存
-        let tmp = []
+        let tmp = [];
         // 是否存在h1 h2 h3 h4 h5 ...标签,同时他们父级相同
         for (let i = 1; i < 7; i++) {
-            let list = document.body.getElementsByTagName(`h${i}`)
+            let list = document.body.getElementsByTagName(`h${i}`);
             // 获取父级
             for (let i = 0; i < list.length; i++) {
-                const parent = list[i].parentElement
-                const item = tmp.filter(j => j && j['ele'].isEqualNode(parent))[0]
+                const parent = list[i].parentElement;
+                const item = tmp.filter(j => j && j['ele'].isEqualNode(parent))[0];
                 if (item) {
-                    item.count += 1
+                    item.count += 1;
                 } else {
                     tmp.push({
                         ele: parent,
-                        count: 1
-                    })
+                        count: 1,
+                    });
                 }
             }
         }
         // 排序
         tmp.sort((a, b) => b.count - a.count);
         // 获取出现次数最高父级 返回
-        return tmp.length ? tmp[0]["ele"] : null
+        return tmp.length ? tmp[0]['ele'] : null;
     }
 
     try {
         document.onreadystatechange = function () {
-            if (document.readyState === "complete") {
+            if (document.readyState === 'complete') {
                 start();
             }
-        }
+        };
     } catch (e) {
-        console.error("github、码云 md文件目录化 脚本异常报错：");
-        console.error(e)
-        console.error("请联系作者修复解决，https://github.com/lecoler/md-list")
+        console.error('github、码云 md文件目录化 脚本异常报错：');
+        console.error(e);
+        console.error('请联系作者修复解决，https://github.com/lecoler/md-list');
     }
 })();
