@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.9
+// @version      1.10
 // @description  github、码云、npmjs项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
