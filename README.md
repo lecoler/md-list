@@ -30,6 +30,7 @@
   - URL以`*.md`结尾的网站（测试版） 
 
 ### 更新日志
+***2020.11.10*** : V1.11 修复标题显示标签化问题           
 ***2020.10.30*** : V1.10 Fix not find node        
 ***2020.09.15*** : V1.9  针对URL=*.md结尾网页优化，移除计时器，改成用户触发加载检测，同时为检测失败添加‘移除目录’按钮（测试版）      
 ***2020.09.14*** : V1.8  新增支持全部网站 *.md（测试版）      
@@ -57,10 +58,7 @@
 ### 反馈建议 
 如发现bug/其他异常体验欢迎提交 [issues](https://github.com/lecoler/md-list/issues) 反馈 
 
-### 效果图
+### `<img>`效果图
 
 ![image 演示图](https://raw.githubusercontent.com/lecoler/readme.md-list/master/static/dom_01.png)   
 ![image 演示图](https://raw.githubusercontent.com/lecoler/readme.md-list/master/static/dom_02.png)
-
-### 1.2 `<select>`测试   
-测试

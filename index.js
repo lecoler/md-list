@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.10
+// @version      1.11
 // @description  github、码云、npmjs项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
@@ -15,6 +15,7 @@
 // @match        *://npmjs.com/*/*
 // @match        *://www.npmjs.com/*/*
 // @include      *.md
+// @note         2020.11.10-v1.11 修复标题显示标签化问题
 // @note         2020.10.30-v1.10 Fix not find node
 // @note         2020.09.15-V1.9  优化，移除计时器，改成用户触发加载检测，同时为检测失败添加‘移除目录’按钮（测试版）
 // @note         2020.09.14-V1.8  新增支持全部网站 *.md（测试版）
