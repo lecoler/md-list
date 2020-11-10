@@ -60,6 +60,7 @@
 ### 效果图
 
 ![image 演示图](https://raw.githubusercontent.com/lecoler/readme.md-list/master/static/dom_01.png)   
-![image 演示图](https://raw.githubusercontent.com/lecoler/readme.md-list/master/static/dom_02.png
+![image 演示图](https://raw.githubusercontent.com/lecoler/readme.md-list/master/static/dom_02.png)
 
-### 1.2 <select> 测试
+### 1.2 <select>测试
+测试
