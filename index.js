@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.10
+// @version      1.11
 // @description  github、码云、npmjs项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
@@ -15,6 +15,7 @@
 // @match        *://npmjs.com/*/*
 // @match        *://www.npmjs.com/*/*
 // @include      *.md
+// @note         2020.11.10-v1.11 修复标题显示标签化问题
 // @note         2020.10.30-v1.10 Fix not find node
 // @note         2020.09.15-V1.9  优化，移除计时器，改成用户触发加载检测，同时为检测失败添加‘移除目录’按钮（测试版）
 // @note         2020.09.14-V1.8  新增支持全部网站 *.md（测试版）
@@ -416,7 +417,12 @@
             // 生成菜单
             for (let i of list) {
                 const li = document.createElement('li');
-                li.innerHTML = `<a href="${i.href}" title="${i.value}" style="font-size: ${1.3 - i.type * 0.1}em;margin-left: ${i.type - 1}em;border-left: 0.5em groove hsla(200, 80%, ${45 + i.type * 10}%, 0.8);">${i.value}</a>`;
+                const a = document.createElement('a');
+                a.href = i.href;
+                a.title = i.value;
+                a.style = `font-size: ${1.3 - i.type * 0.1}em;margin-left: ${i.type - 1}em;border-left: 0.5em groove hsla(200, 80%, ${45 + i.type * 10}%, 0.8);`;
+                a.innerText = i.value;
+                li.appendChild(a);
                 $menu.appendChild(li);
                 // 是否不符合规范
                 if (!i.value) {
