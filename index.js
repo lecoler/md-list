@@ -416,7 +416,12 @@
             // 生成菜单
             for (let i of list) {
                 const li = document.createElement('li');
-                li.innerHTML = `<a href="${i.href}" title="${i.value}" style="font-size: ${1.3 - i.type * 0.1}em;margin-left: ${i.type - 1}em;border-left: 0.5em groove hsla(200, 80%, ${45 + i.type * 10}%, 0.8);">${i.value}</a>`;
+                const a = document.createElement('a');
+                a.href = i.href;
+                a.title = i.value;
+                a.style = `font-size: ${1.3 - i.type * 0.1}em;margin-left: ${i.type - 1}em;border-left: 0.5em groove hsla(200, 80%, ${45 + i.type * 10}%, 0.8);`;
+                a.innerText = i.value;
+                li.appendChild(a);
                 $menu.appendChild(li);
                 // 是否不符合规范
                 if (!i.value) {
