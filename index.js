@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.11
+// @version      1.12
 // @description  github、码云、npmjs项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
@@ -15,6 +15,7 @@
 // @match        *://npmjs.com/*/*
 // @match        *://www.npmjs.com/*/*
 // @include      *.md
+// @note         2021.01.09-v1.12 新增根据页面阅读进度高亮
 // @note         2020.11.10-v1.11 修复标题显示标签化问题
 // @note         2020.10.30-v1.10 Fix not find node
 // @note         2020.09.15-V1.9  优化，移除计时器，改成用户触发加载检测，同时为检测失败添加‘移除目录’按钮（测试版）
@@ -305,6 +306,15 @@
                 height: 16px;
             }
         }
+        .le-md li.le-md-title-active a{
+            font-weight: 600;
+            background: linear-gradient(-135deg, #ffcccc 0.6em, #fff 0);
+        }
+        .le-md li.le-md-title-active.le-md-title-active-first a{
+            background: linear-gradient(-135deg, #ff9999 0.6em, #fff 0);
+            color: #000;
+            font-weight: 700;
+        }
         `;
         document.head.appendChild(style);
     }
@@ -389,10 +399,13 @@
                 if ($a) {
                     // 获取锚点
                     const href = $a.getAttribute('href');
+                    // 获取offsetTop
+                    const offsetTop = getTop($a)
                     list.push({
                         type: lastCharAt,
                         value,
                         href,
+                        offsetTop
                     });
                 }
             }
@@ -417,6 +430,7 @@
             // 生成菜单
             for (let i of list) {
                 const li = document.createElement('li');
+                li.setAttribute('data-offsetTop', i.offsetTop)
                 const a = document.createElement('a');
                 a.href = i.href;
                 a.title = i.value;
@@ -498,10 +512,103 @@
         return tmp.length ? tmp[0]['ele'] : null;
     }
 
+    // 监听Windows滚动事件
+    function onScrollEvent() {
+        const fun = debounce(updateTitleActive, 500)
+        // 判断原页面是否存在滚动事件监听，存在则合并，否则新建
+        const oldFun = window.onscroll
+        // 存在
+        if (oldFun && oldFun.constructor === Function) {
+            window.onscroll = function () {
+                // 触发原页面事件
+                oldFun.call(this)
+                // 刷新标题 active 状态
+                fun()
+            }
+        } else {
+            window.onscroll = function () {
+                // 刷新标题 active 状态
+                fun()
+            }
+        }
+    }
+
+    /**
+     * @Description 防抖动
+     * @author lecoler
+     * @date 2020/7/1
+     * @param func<Function>
+     * @param time<number>
+     * @return Function
+     */
+    function debounce(func, time) {
+        let context, args, timeId, timestamp
+
+        function timeout() {
+            const now = Date.now() - timestamp
+            if (now >= 0 && now < time) {
+                timeId = setTimeout(timeout, time - now)
+            } else {
+                timeId = null
+                func.apply(context, args)
+            }
+        }
+
+        function action() {
+            context = this
+            args = arguments
+            timestamp = Date.now()
+            if (!timeId) timeId = setTimeout(timeout, time)
+        }
+
+        return action
+    }
+
+    // 更新标题active状态
+    function updateTitleActive() {
+        // 获取目前页面scrollTop
+        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0
+        const offsetHeight = document.documentElement.clientHeight || document.body.clientHeight || 0
+        // 存在菜单
+        if ($menu) {
+            const list = $menu.children || []
+            // 标志位，是否第一个
+            let flag = false
+            for (let i of list) {
+                const val = i.getAttribute('data-offsetTop')
+                // 排他
+                i.removeAttribute('class')
+                // active
+                if (scrollTop <= val && val <= offsetHeight + scrollTop) {
+                    i.className = 'le-md-title-active'
+
+                    if(flag) continue
+                    i.className = i.getAttribute('class') + ' le-md-title-active-first'
+                    flag = true
+                }
+            }
+        }
+    }
+
+    /**
+     * @describe 获取dom元素距离body的offsetTop
+     * @author lecoler
+     * @date 21-1-8
+     * @param $dom<Node>
+     * @return Number
+     */
+    function getTop($dom, val = 0) {
+        if (!$dom) return val
+        const offsetTop = $dom.offsetTop || 0
+        return getTop($dom.offsetParent, offsetTop + val)
+    }
+
     try {
         document.onreadystatechange = function () {
             if (document.readyState === 'complete') {
                 start();
+                // 监听滚动
+                onScrollEvent()
             }
         };
     } catch (e) {
