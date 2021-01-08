@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.12
+// @version      1.13
 // @description  github、码云、npmjs项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
@@ -15,6 +15,7 @@
 // @match        *://npmjs.com/*/*
 // @match        *://www.npmjs.com/*/*
 // @include      *.md
+// @note         2021.01.09-v1.13 修复高亮bug
 // @note         2021.01.09-v1.12 新增根据页面阅读进度高亮
 // @note         2020.11.10-v1.11 修复标题显示标签化问题
 // @note         2020.10.30-v1.10 Fix not find node
@@ -569,22 +570,24 @@
         // 获取目前页面scrollTop
         const scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0
         const offsetHeight = document.documentElement.clientHeight || document.body.clientHeight || 0
+        const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 0
         // 存在菜单
         if ($menu) {
             const list = $menu.children || []
-            // 标志位，是否第一个
-            let flag = false
-            for (let i of list) {
-                const val = i.getAttribute('data-offsetTop')
-                // 排他
-                i.removeAttribute('class')
-                // active
-                if (scrollTop <= val && val <= offsetHeight + scrollTop) {
-                    i.className = 'le-md-title-active'
 
-                    if(flag) continue
-                    i.className = i.getAttribute('class') + ' le-md-title-active-first'
-                    flag = true
+            for (let i = 0; i < list.length; i++) {
+                const val = list[i].getAttribute('data-offsetTop')
+                const nextVal = list[i + 1] ? list[i + 1].getAttribute('data-offsetTop') : scrollHeight
+                // 排他
+                list[i].removeAttribute('class')
+
+                // 肉眼可见部分，标题高亮
+                if (scrollTop <= val && val <= offsetHeight + scrollTop) {
+                    list[i].className = 'le-md-title-active'
+                }
+                // 正在阅读部分，标题高亮
+                if (scrollTop >= val && nextVal > scrollTop) {
+                    list[i].className = 'le-md-title-active le-md-title-active-first'
                 }
             }
         }
