@@ -372,7 +372,7 @@
             const $parent = document.getElementById('readme') || document.getElementById('wiki-body');
             $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
             // 标题dom高度
-            const $boxTitle = $parent.parentElement.getElementsByClassName('js-sticky')[0];
+            const $boxTitle = $parent.parentElement ? $parent.parentElement.getElementsByClassName('js-sticky')[0] : null;
             titleHeight = $boxTitle ? $boxTitle.offsetHeight + 2 : 0;
             // 监听github dom的变化
             !$menu && domChangeListener(document.getElementById('js-repo-pjax-container'), start);
