@@ -2,7 +2,7 @@
 // @name         github、码云 md文件目录化
 // @name:en      Github, code cloud md file directory
 // @namespace    github、码云 md文件目录化
-// @version      1.13
+// @version      1.14
 // @description  github、码云、npmjs项目README.md增加目录侧栏导航，悬浮按钮
 // @description:en  Github,code cloud project README.md add directory sidebar navigation,Floating button
 // @author       lecoler
@@ -15,6 +15,7 @@
 // @match        *://npmjs.com/*/*
 // @match        *://www.npmjs.com/*/*
 // @include      *.md
+// @note         2022.03.18-v1.14 降低悬浮球位置，修改样式
 // @note         2021.01.09-v1.13 修复高亮bug
 // @note         2021.01.09-v1.12 新增根据页面阅读进度高亮
 // @note         2020.11.10-v1.11 修复标题显示标签化问题
@@ -50,6 +51,7 @@
     let $button = null;
     let lastPathName = '';
     let moveStatus = false;
+    let titleHeight = 0;
 
     // 初始化按钮
     function createDom() {
@@ -121,7 +123,7 @@
         style.innerHTML = `
        .le-md {
             position: fixed;
-            top: 12%;
+            top: 16%;
             left: 90%;
             z-index: 999;
         }
@@ -249,13 +251,13 @@
             background: #EFF7FF;
         }
         .le-md > ul a:hover {
-            background: #99CCFF;
+            background: #fff;
             border-left: 1em groove #0099CC !important;
         }
         .le-md > ul a {
             text-decoration: none;
             font-size: 1em;
-            color: #333;
+            color: #909399;
             text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
             display: block;
             white-space: nowrap;
@@ -270,7 +272,7 @@
             border-left: 0.5em groove #e2e2e2;
             border-right: 1px solid #e2e2e2;
             border-top: 1px solid #e2e2e2;
-            background: #fff;
+            background: #f4f4f5;
             -webkit-box-sizing: border-box;
                     box-sizing: border-box;
             -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
@@ -308,7 +310,6 @@
             }
         }
         .le-md li.le-md-title-active a{
-            font-weight: 600;
             background: linear-gradient(-135deg, #ffcccc 0.6em, #fff 0);
         }
         .le-md li.le-md-title-active.le-md-title-active-first a{
@@ -370,6 +371,9 @@
             //github home / wiki
             const $parent = document.getElementById('readme') || document.getElementById('wiki-body');
             $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
+            // 标题dom高度
+            const $boxTitle = $parent.parentElement.getElementsByClassName('js-sticky')[0];
+            titleHeight = $boxTitle ? $boxTitle.offsetHeight: 0;
             // 监听github dom的变化
             !$menu && domChangeListener(document.getElementById('js-repo-pjax-container'), start);
         } else if (host === 'gitee.com') {
@@ -568,7 +572,8 @@
     // 更新标题active状态
     function updateTitleActive() {
         // 获取目前页面scrollTop
-        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0
+        const ScrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0
+        const scrollTop = ScrollTop + titleHeight
         const offsetHeight = document.documentElement.clientHeight || document.body.clientHeight || 0
         const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 0
         // 存在菜单
