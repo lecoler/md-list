@@ -373,7 +373,7 @@
             $content = $parent && $parent.getElementsByClassName('markdown-body')[0];
             // 标题dom高度
             const $boxTitle = $parent.parentElement.getElementsByClassName('js-sticky')[0];
-            titleHeight = $boxTitle ? $boxTitle.offsetHeight: 0;
+            titleHeight = $boxTitle ? $boxTitle.offsetHeight + 2 : 0;
             // 监听github dom的变化
             !$menu && domChangeListener(document.getElementById('js-repo-pjax-container'), start);
         } else if (host === 'gitee.com') {
