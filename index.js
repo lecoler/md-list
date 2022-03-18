@@ -375,7 +375,8 @@
             const $boxTitle = ($parent && $parent.parentElement) ? $parent.parentElement.getElementsByClassName('js-sticky')[0] : null;
             titleHeight = $boxTitle ? $boxTitle.offsetHeight + 2 : 0;
             // 监听github dom的变化
-            !$menu && domChangeListener(document.getElementById('js-repo-pjax-container'), start);
+            // !$menu && domChangeListener(document.getElementById('js-repo-pjax-container'), start);
+            !$menu && window.addEventListener('pjax:complete', start);
         } else if (host === 'gitee.com') {
             //码云 home
             const $parent = document.getElementById('tree-content-holder');
